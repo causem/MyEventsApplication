@@ -1,9 +1,11 @@
 package com.example.MyEvents.service.impl;
 
 import com.example.MyEvents.dto.*;
+import com.example.MyEvents.exception.BadRequestException;
 import com.example.MyEvents.exception.EventNotFoundException;
 import com.example.MyEvents.exception.LocationNotFoundException;
 import com.example.MyEvents.mapper.EventMapper;
+import com.example.MyEvents.mapper.LocationMapper;
 import com.example.MyEvents.model.Event;
 import com.example.MyEvents.model.Location;
 import com.example.MyEvents.repository.EventRepository;
@@ -19,7 +21,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class EventServiceImpl implements EventService {
 
   private final EventRepository eventRepo;
@@ -42,9 +44,26 @@ public class EventServiceImpl implements EventService {
 
   @Override
   public EventResponseDto create(EventCreateDto dto) {
-    Location loc = locationRepo.findById(dto.locationId())
-            .orElseThrow(() -> new LocationNotFoundException(dto.locationId()));
-    Event saved = eventRepo.save(EventMapper.toEntity(dto, loc));
+    Location location;
+
+    if (dto.locationId() != null) {
+      location = locationRepo.findById(dto.locationId())
+              .orElseThrow(() -> new LocationNotFoundException(dto.locationId()));
+    } else if (dto.location() != null) {
+      Location toSave = LocationMapper.toEntity(dto.location());
+      location = locationRepo.save(toSave);
+    } else {
+      throw new BadRequestException("Provide either locationId or location");
+    }
+
+    Event e = new Event();
+    e.setName(dto.name());
+    e.setDescription(dto.description());
+    e.setDate(dto.date());
+    e.setCapacity(dto.capacity());
+    e.setLocation(location);
+
+    Event saved = eventRepo.save(e);
     return EventMapper.toDto(saved);
   }
 

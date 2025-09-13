@@ -1,9 +1,6 @@
 package com.example.MyEvents.dto;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 
@@ -12,5 +9,13 @@ public record EventCreateDto(
         String description,
         @NotNull @Future LocalDateTime date,
         @Min(1) int capacity,
-        @NotNull Long locationId
-) {}
+        Long locationId,
+        LocationDto location
+) {
+    @AssertTrue(message = "Provide either locationId or location object, but not both")
+    public boolean isExactlyOneLocationSource() {
+        boolean hasId = locationId != null;
+        boolean hasObj = location != null;
+        return hasId ^ hasObj;
+    }
+}

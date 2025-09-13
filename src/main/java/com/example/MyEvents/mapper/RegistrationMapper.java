@@ -10,6 +10,8 @@ public class RegistrationMapper {
                 r.getId(),
                 r.getEvent().getId(),
                 r.getParticipant().getId(),
+                r.getParticipant().getName(),
+                r.getParticipant().getEmail(),
                 r.getRegistrationDate()
         );
     }

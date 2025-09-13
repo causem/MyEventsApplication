@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class ParticipantServiceImpl implements ParticipantService {
 
   private final ParticipantRepository participantRepo;
@@ -39,5 +39,12 @@ public class ParticipantServiceImpl implements ParticipantService {
     Participant p = ParticipantMapper.toEntity(dto);
     Participant saved = participantRepo.save(p);
     return ParticipantMapper.toDto(saved);
+  }
+
+  @Override
+  public ParticipantResponseDto getByEmail(String email) {
+    return participantRepo.findByEmail(email)
+            .map(ParticipantMapper::toDto)
+            .orElseThrow(() -> new ParticipantNotFoundException(email));
   }
 }

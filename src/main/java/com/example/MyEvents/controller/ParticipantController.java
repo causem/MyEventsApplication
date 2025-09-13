@@ -5,12 +5,14 @@ import com.example.MyEvents.dto.ParticipantResponseDto;
 import com.example.MyEvents.service.ParticipantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+@Tag(name = "Participants", description = "Register and fetch participants")
 @RestController
 @RequestMapping("/api/participants")
 @RequiredArgsConstructor
@@ -32,5 +34,13 @@ public class ParticipantController {
     @ApiResponse(responseCode = "404", description = "Participant not found")
     public ResponseEntity<ParticipantResponseDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(participantService.getById(id));
+    }
+
+    @GetMapping("/by-email")
+    @Operation(summary = "Get participant by email", description = "Returns details of a participant by email")
+    @ApiResponse(responseCode = "200", description = "Participant found and returned")
+    @ApiResponse(responseCode = "404", description = "Participant not found")
+    public ResponseEntity<ParticipantResponseDto> getByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(participantService.getByEmail(email));
     }
 }

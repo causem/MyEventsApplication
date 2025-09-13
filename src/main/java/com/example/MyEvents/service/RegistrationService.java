@@ -9,4 +9,5 @@ public interface RegistrationService {
   RegistrationResponseDto register(Long eventId, Long participantId);
   RegistrationResponseDto registerByEmail(Long eventId, String email);
   void cancel(Long eventId, Long participantId);
+  List<RegistrationResponseDto> getRegistrationsForEvent(Long eventId);
 }

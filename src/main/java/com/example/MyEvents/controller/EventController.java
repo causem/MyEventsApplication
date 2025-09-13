@@ -4,6 +4,7 @@ import com.example.MyEvents.dto.*;
 import com.example.MyEvents.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
 
+@Tag(name = "Events", description = "CRUD operations on events and seat statistics")
 @RestController
 @RequestMapping("/api/events")
 @RequiredArgsConstructor

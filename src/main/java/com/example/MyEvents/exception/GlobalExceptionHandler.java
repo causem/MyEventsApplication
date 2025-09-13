@@ -69,4 +69,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDto> handleRegistrationNotFound(RegistrationNotFoundException ex) {
         return build(HttpStatus.NOT_FOUND, "REGISTRATION_NOT_FOUND", ex.getMessage());
     }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleBadRequest(BadRequestException ex) {
+        return build(HttpStatus.BAD_REQUEST, "BAD_REQUEST", ex.getMessage());
+    }
 }

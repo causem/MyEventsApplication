@@ -4,10 +4,14 @@ import com.example.MyEvents.dto.RegistrationResponseDto;
 import com.example.MyEvents.service.RegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Tag(name = "Registrations", description = "Manage participant registrations for events")
 @RestController
 @RequestMapping("/api/events/{eventId}/registrations")
 @RequiredArgsConstructor
@@ -48,5 +52,14 @@ public class RegistrationController {
             @PathVariable Long participantId) {
         registrationService.cancel(eventId, participantId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    @Operation(summary = "Get registrations for an event",
+            description = "Returns the list of participants registered for the given event")
+    @ApiResponse(responseCode = "200", description = "Registrations returned")
+    @ApiResponse(responseCode = "404", description = "Event not found")
+    public ResponseEntity<List<RegistrationResponseDto>> getRegistrationsForEvent(@PathVariable Long eventId) {
+        return ResponseEntity.ok(registrationService.getRegistrationsForEvent(eventId));
     }
 }

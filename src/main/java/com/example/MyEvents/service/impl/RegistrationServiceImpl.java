@@ -17,10 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class RegistrationServiceImpl implements RegistrationService {
 
   private final RegistrationRepository registrationRepo;
@@ -85,5 +86,14 @@ public class RegistrationServiceImpl implements RegistrationService {
     if (taken >= event.getCapacity()) {
       throw new RegistrationFullException(eventId);
     }
+  }
+  @Override
+  @Transactional(readOnly = true)
+  public List<RegistrationResponseDto> getRegistrationsForEvent(Long eventId) {
+    if (!eventRepo.existsById(eventId)) {
+      throw new EventNotFoundException(eventId);
+    }
+    List<Registration> list = registrationRepo.findAllByEventIdFetchParticipant(eventId);
+    return list.stream().map(RegistrationMapper::toDto).toList();
   }
 }

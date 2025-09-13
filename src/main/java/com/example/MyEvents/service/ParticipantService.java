@@ -10,4 +10,5 @@ public interface ParticipantService {
   List<ParticipantResponseDto> getAll();
   ParticipantResponseDto getById(Long id);
   ParticipantResponseDto create(ParticipantDto dto);
+  ParticipantResponseDto getByEmail(String email);
 }

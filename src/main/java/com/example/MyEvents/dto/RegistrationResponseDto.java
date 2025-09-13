@@ -6,5 +6,7 @@ public record RegistrationResponseDto(
         Long id,
         Long eventId,
         Long participantId,
+        String participantName,
+        String participantEmail,
         LocalDateTime registrationDate
 ) {}
