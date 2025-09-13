@@ -1,6 +1,9 @@
 package com.example.MyEvents.service.impl;
 
+import com.example.MyEvents.dto.*;
 import com.example.MyEvents.exception.EventNotFoundException;
+import com.example.MyEvents.exception.LocationNotFoundException;
+import com.example.MyEvents.mapper.EventMapper;
 import com.example.MyEvents.model.Event;
 import com.example.MyEvents.model.Location;
 import com.example.MyEvents.repository.EventRepository;
@@ -18,57 +21,53 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
+
   private final EventRepository eventRepo;
   private final LocationRepository locationRepo;
   private final RegistrationRepository registrationRepo;
 
   @Override
-  public List<Event> getAll() {
-    return eventRepo.findAllWithLocation();
+  public List<EventResponseDto> getAll() {
+    return eventRepo.findAll().stream()
+            .map(EventMapper::toDto)
+            .toList();
   }
 
   @Override
-  public Event getById(Long id) {
-    return eventRepo.findByIdWithLocation(id)
+  public EventResponseDto getById(Long id) {
+    Event e = eventRepo.findById(id)
             .orElseThrow(() -> new EventNotFoundException(id));
+    return EventMapper.toDto(e);
   }
 
   @Override
-  @Transactional
-  public Event create(String name, String description, LocalDateTime date, int capacity, Long locationId) {
-    Location loc = locationRepo.findById(locationId)
-            .orElseThrow(() -> new RuntimeException("Location " + locationId + " not found"));
-
-    Event e = Event.builder()
-            .name(name)
-            .description(description)
-            .date(date)
-            .capacity(capacity)
-            .location(loc)
-            .build();
-    return eventRepo.save(e);
+  public EventResponseDto create(EventCreateDto dto) {
+    Location loc = locationRepo.findById(dto.locationId())
+            .orElseThrow(() -> new LocationNotFoundException(dto.locationId()));
+    Event saved = eventRepo.save(EventMapper.toEntity(dto, loc));
+    return EventMapper.toDto(saved);
   }
 
   @Override
-  @Transactional
-  public Event update(Long id, String name, String description, LocalDateTime date, Integer capacity, Long locationId) {
-    Event e = getById(id);
-    if (name != null) e.setName(name);
-    if (description != null) e.setDescription(description);
-    if (date != null) e.setDate(date);
-    if (capacity != null) e.setCapacity(capacity);
-    if (locationId != null) {
-      Location loc = locationRepo.findById(locationId)
-              .orElseThrow(() -> new RuntimeException("Location " + locationId + " not found"));
-      e.setLocation(loc);
+  public EventResponseDto update(Long id, EventUpdateDto dto) {
+    Event e = eventRepo.findById(id)
+            .orElseThrow(() -> new EventNotFoundException(id));
+
+    Location loc = null;
+    if (dto.locationId() != null) {
+      loc = locationRepo.findById(dto.locationId())
+              .orElseThrow(() -> new LocationNotFoundException(dto.locationId()));
     }
-    return e;
+
+    EventMapper.apply(dto, e, loc);
+    return EventMapper.toDto(e);
   }
 
   @Override
-  @Transactional
   public void delete(Long id) {
-    if (!eventRepo.existsById(id)) throw new RuntimeException("Event " + id + " not found");
+    if (!eventRepo.existsById(id)) {
+      throw new EventNotFoundException(id);
+    }
     eventRepo.deleteById(id);
   }
 
@@ -79,13 +78,31 @@ public class EventServiceImpl implements EventService {
 
   @Override
   public int availableSeats(Long eventId) {
-    Event e = getById(eventId);
-    long taken = takenSeats(eventId);
+    Event e = eventRepo.findById(eventId)
+            .orElseThrow(() -> new EventNotFoundException(eventId));
+    long taken = registrationRepo.countByEvent_Id(eventId);
     return Math.max(0, e.getCapacity() - (int) taken);
   }
 
   @Override
   public boolean hasFreeSeats(Long eventId) {
     return availableSeats(eventId) > 0;
+  }
+
+  @Override
+  public SeatsStatusDto seats(Long eventId) {
+    Event e = eventRepo.findById(eventId)
+            .orElseThrow(() -> new EventNotFoundException(eventId));
+    long taken = registrationRepo.countByEvent_Id(eventId);
+    return EventMapper.seatsOf(e, taken);
+  }
+
+  @Override
+  public EventWithSeatsDto getByIdWithSeats(Long id) {
+    Event e = eventRepo.findById(id)
+            .orElseThrow(() -> new EventNotFoundException(id));
+    long taken = registrationRepo.countByEvent_Id(id);
+    int available = Math.max(0, e.getCapacity() - (int) taken);
+    return EventMapper.toDtoWithSeats(e, taken, available);
   }
 }

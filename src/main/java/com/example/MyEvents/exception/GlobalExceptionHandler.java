@@ -32,6 +32,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, "REGISTRATION_FULL", ex.getMessage());
     }
 
+    @ExceptionHandler(ParticipantNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleParticipantNotFound(ParticipantNotFoundException ex) {
+        return build(HttpStatus.NOT_FOUND, "PARTICIPANT_NOT_FOUND", ex.getMessage());
+    }
+
     @ExceptionHandler(AlreadyRegisteredException.class)
     @ResponseBody
     public ResponseEntity<ErrorDto> handleAlreadyRegistered(AlreadyRegisteredException ex) {
@@ -47,9 +52,21 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", msg);
     }
 
+    @ExceptionHandler(LocationNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleLocationNotFound(LocationNotFoundException ex) {
+        return build(HttpStatus.NOT_FOUND, "LOCATION_NOT_FOUND", ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResponseEntity<ErrorDto> handleGeneral(Exception ex) {
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", ex.getMessage());
+    }
+
+    @ExceptionHandler(RegistrationNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleRegistrationNotFound(RegistrationNotFoundException ex) {
+        return build(HttpStatus.NOT_FOUND, "REGISTRATION_NOT_FOUND", ex.getMessage());
     }
 }

@@ -1,10 +1,13 @@
 package com.example.MyEvents.service.impl;
 
-import com.example.MyEvents.exception.AlreadyRegisteredException;
-import com.example.MyEvents.exception.RegistrationFullException;
+import com.example.MyEvents.dto.RegistrationResponseDto;
+import com.example.MyEvents.exception.*;
+import com.example.MyEvents.mapper.RegistrationMapper;
 import com.example.MyEvents.model.Event;
 import com.example.MyEvents.model.Participant;
 import com.example.MyEvents.model.Registration;
+import com.example.MyEvents.repository.EventRepository;
+import com.example.MyEvents.repository.ParticipantRepository;
 import com.example.MyEvents.repository.RegistrationRepository;
 import com.example.MyEvents.service.EventService;
 import com.example.MyEvents.service.ParticipantService;
@@ -21,43 +24,66 @@ import java.time.LocalDateTime;
 public class RegistrationServiceImpl implements RegistrationService {
 
   private final RegistrationRepository registrationRepo;
-  private final EventService eventService;
-  private final ParticipantService participantService;
+  private final EventRepository eventRepo;
+  private final ParticipantRepository participantRepo;
 
   @Override
-  @Transactional
-  public Registration register(Long eventId, Long participantId) {
-    Event event = eventService.getById(eventId);
-    Participant participant = participantService.getById(participantId);
+  public RegistrationResponseDto register(Long eventId, Long participantId) {
+    Event event = eventRepo.findById(eventId)
+            .orElseThrow(() -> new EventNotFoundException(eventId));
 
-    if (registrationRepo.existsByEvent_IdAndParticipant_Id(eventId, participantId)) {
-      throw new AlreadyRegisteredException(eventId,participantId);
-    }
+    Participant participant = participantRepo.findById(participantId)
+            .orElseThrow(() -> new ParticipantNotFoundException(participantId));
 
-    if (!eventService.hasFreeSeats(eventId)) {
-      throw new RegistrationFullException(eventId);
-    }
+    validateRegistration(event, participant);
 
-    Registration r = Registration.builder()
-            .event(event)
-            .participant(participant)
-            .registrationDate(LocalDateTime.now())
-            .build();
-    return registrationRepo.save(r);
+    Registration r = new Registration();
+    r.setEvent(event);
+    r.setParticipant(participant);
+    r.setRegistrationDate(LocalDateTime.now());
+
+    Registration saved = registrationRepo.save(r);
+    return RegistrationMapper.toDto(saved);
   }
 
   @Override
-  @Transactional
-  public Registration registerByEmail(Long eventId, String participantName, String email) {
-    Participant p = participantService.registerOrGet(participantName, email);
-    return register(eventId, p.getId());
+  public RegistrationResponseDto registerByEmail(Long eventId, String email) {
+    Event event = eventRepo.findById(eventId)
+            .orElseThrow(() -> new EventNotFoundException(eventId));
+
+    Participant participant = participantRepo.findByEmail(email)
+            .orElseThrow(() -> new ParticipantNotFoundException(email));
+
+    validateRegistration(event, participant);
+
+    Registration r = new Registration();
+    r.setEvent(event);
+    r.setParticipant(participant);
+    r.setRegistrationDate(LocalDateTime.now());
+
+    Registration saved = registrationRepo.save(r);
+    return RegistrationMapper.toDto(saved);
   }
 
   @Override
-  @Transactional
   public void cancel(Long eventId, Long participantId) {
     Registration r = registrationRepo.findByEvent_IdAndParticipant_Id(eventId, participantId)
-            .orElseThrow(() -> new RuntimeException("Registration not found"));
+            .orElseThrow(() -> new RegistrationNotFoundException(eventId, participantId));
     registrationRepo.delete(r);
+  }
+
+  // --- private helpers ---
+  private void validateRegistration(Event event, Participant participant) {
+    Long eventId = event.getId();
+    Long participantId = participant.getId();
+
+    if (registrationRepo.existsByEvent_IdAndParticipant_Id(eventId, participantId)) {
+      throw new AlreadyRegisteredException(eventId, participantId);
+    }
+
+    long taken = registrationRepo.countByEvent_Id(eventId);
+    if (taken >= event.getCapacity()) {
+      throw new RegistrationFullException(eventId);
+    }
   }
 }

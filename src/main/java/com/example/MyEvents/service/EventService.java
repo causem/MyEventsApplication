@@ -1,19 +1,29 @@
 package com.example.MyEvents.service;
 
-import com.example.MyEvents.model.Event;
 
-import java.time.LocalDateTime;
+import com.example.MyEvents.dto.*;
+
 import java.util.List;
-import java.util.function.Consumer;
 
 public interface EventService {
-  List<Event> getAll();
-  Event getById(Long id);
-  Event create(String name, String description, LocalDateTime date, int capacity, Long locationId);
-  Event update(Long id, String name, String description, LocalDateTime date, Integer capacity, Long locationId);
+
+  List<EventResponseDto> getAll();
+
+  EventResponseDto getById(Long id);
+
+  EventResponseDto create(EventCreateDto dto);
+
+  EventResponseDto update(Long id, EventUpdateDto dto);
+
   void delete(Long id);
 
   long takenSeats(Long eventId);
+
   int availableSeats(Long eventId);
+
   boolean hasFreeSeats(Long eventId);
+
+  SeatsStatusDto seats(Long eventId);
+
+  EventWithSeatsDto getByIdWithSeats(Long id);
 }
