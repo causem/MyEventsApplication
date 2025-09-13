@@ -5,7 +5,7 @@ import com.example.MyEvents.model.Registration;
 import java.util.List;
 
 public interface RegistrationService {
-  Registration registerParticipant(Long eventId, Long participantId);
-  List<Registration> listRegistrations(Long eventId);
-  void cancel(Long registrationId);
+  Registration register(Long eventId, Long participantId);
+  Registration registerByEmail(Long eventId, String participantName, String email);
+  void cancel(Long eventId, Long participantId);
 }

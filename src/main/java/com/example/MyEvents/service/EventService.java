@@ -2,15 +2,18 @@ package com.example.MyEvents.service;
 
 import com.example.MyEvents.model.Event;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 
 public interface EventService {
-  Event create(Event e);
-  Event get(Long id);
-  Event update(Long id, Consumer<Event> mutator);
+  List<Event> getAll();
+  Event getById(Long id);
+  Event create(String name, String description, LocalDateTime date, int capacity, Long locationId);
+  Event update(Long id, String name, String description, LocalDateTime date, Integer capacity, Long locationId);
   void delete(Long id);
-  List<Event> list();               // lista wydarzeń
+
+  long takenSeats(Long eventId);
+  int availableSeats(Long eventId);
   boolean hasFreeSeats(Long eventId);
-  int freeSeats(Long eventId);
 }
