@@ -29,6 +29,6 @@ public class Participant {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "participant", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Registration> registrations = new HashSet<>();
 }
