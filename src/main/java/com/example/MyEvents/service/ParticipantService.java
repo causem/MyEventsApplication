@@ -11,4 +11,5 @@ public interface ParticipantService {
   ParticipantResponseDto getById(Long id);
   ParticipantResponseDto create(ParticipantDto dto);
   ParticipantResponseDto getByEmail(String email);
+  boolean existsByEmail(String email);
 }

@@ -73,7 +73,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     registrationRepo.delete(r);
   }
 
-  // --- private helpers ---
+
   private void validateRegistration(Event event, Participant participant) {
     Long eventId = event.getId();
     Long participantId = participant.getId();

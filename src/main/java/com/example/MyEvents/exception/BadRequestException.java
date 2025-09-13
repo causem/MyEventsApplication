@@ -1,4 +1,3 @@
-// package: com.example.MyEvents.exception
 package com.example.MyEvents.exception;
 
 public class BadRequestException extends RuntimeException {

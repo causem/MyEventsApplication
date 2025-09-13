@@ -14,12 +14,13 @@ public class LocationMapper {
         return l;
     }
 
+    public static void updateEntity(Location l, LocationDto dto) {
+        l.setName(dto.name());
+        l.setCity(dto.city());
+        l.setAddress(dto.address());
+    }
+
     public static LocationResponseDto toDto(Location l) {
-        return new LocationResponseDto(
-                l.getId(),
-                l.getName(),
-                l.getCity(),
-                l.getAddress()
-        );
+        return new LocationResponseDto(l.getId(), l.getName(), l.getCity(), l.getAddress());
     }
 }

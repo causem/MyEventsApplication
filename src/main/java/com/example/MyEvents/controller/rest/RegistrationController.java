@@ -1,4 +1,4 @@
-package com.example.MyEvents.controller;
+package com.example.MyEvents.controller.rest;
 
 import com.example.MyEvents.dto.RegistrationResponseDto;
 import com.example.MyEvents.service.RegistrationService;

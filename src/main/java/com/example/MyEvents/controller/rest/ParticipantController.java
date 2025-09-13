@@ -1,4 +1,4 @@
-package com.example.MyEvents.controller;
+package com.example.MyEvents.controller.rest;
 
 import com.example.MyEvents.dto.ParticipantDto;
 import com.example.MyEvents.dto.ParticipantResponseDto;

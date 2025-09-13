@@ -16,6 +16,6 @@ public record EventCreateDto(
     public boolean isExactlyOneLocationSource() {
         boolean hasId = locationId != null;
         boolean hasObj = location != null;
-        return hasId ^ hasObj;
+        return (hasId ^ hasObj) || (!hasId && !hasObj);
     }
 }

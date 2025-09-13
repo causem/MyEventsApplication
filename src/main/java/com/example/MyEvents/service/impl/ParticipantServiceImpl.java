@@ -47,4 +47,10 @@ public class ParticipantServiceImpl implements ParticipantService {
             .map(ParticipantMapper::toDto)
             .orElseThrow(() -> new ParticipantNotFoundException(email));
   }
+
+  @Override
+  @Transactional(readOnly = true)
+  public boolean existsByEmail(String email) {
+    return participantRepo.existsByEmail(email);
+  }
 }
