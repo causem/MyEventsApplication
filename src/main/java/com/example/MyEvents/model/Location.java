@@ -6,19 +6,23 @@ import lombok.*;
 
 @Entity
 @Table(name = "locations")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false)
     private String name;
 
-    @NotBlank
+    @Column(nullable = false)
     private String city;
 
-    @NotBlank
+    @Column(nullable = false)
     private String address;
 }

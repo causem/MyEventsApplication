@@ -21,16 +21,17 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @Column(nullable=false)
     private String name;
 
     @Column(length = 2000)
     private String description;
 
-    @Future
+    @Column(nullable=false)
     private LocalDateTime date;
 
     @Min(1)
+    @Column(nullable=false)
     private int capacity;
 
     @ManyToOne

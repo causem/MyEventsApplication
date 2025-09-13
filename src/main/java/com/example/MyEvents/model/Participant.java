@@ -9,26 +9,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(
-    name = "participants",
-    uniqueConstraints = @UniqueConstraint(name = "uk_participant_email", columnNames = "email")
-)
+@Table(name = "participants")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor @Builder
+@AllArgsConstructor
+@Builder
 public class Participant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false)
     private String name;
 
     @Email
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)

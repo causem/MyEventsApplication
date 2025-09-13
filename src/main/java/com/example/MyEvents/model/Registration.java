@@ -9,10 +9,7 @@ import java.time.LocalDateTime;
 @Table(
     name = "registrations",
     uniqueConstraints = @UniqueConstraint(
-        name = "uk_event_participant",
-        columnNames = {"event_id","participant_id"}
-    )
-)
+        columnNames = {"event_id","participant_id"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,5 +30,5 @@ public class Registration {
     private Participant participant;
 
     @Column(nullable = false)
-    private LocalDateTime registrationDate = LocalDateTime.now();
+    private LocalDateTime registrationDate;
 }
