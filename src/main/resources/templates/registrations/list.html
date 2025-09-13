@@ -17,8 +17,8 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="r : ${registrations}">
-        <td th:text="${r.id}">1</td>
+    <tr th:each="r, stat : ${registrations}">
+        <td th:text="${stat.index + 1}">1</td>
         <td th:text="${r.participantName}">Alice</td>
         <td th:text="${r.participantEmail}">alice@ex.com</td>
         <td th:text="${#temporals.format(r.registrationDate, 'yyyy-MM-dd HH:mm')}">2025-10-01 19:20</td>

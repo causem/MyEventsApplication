@@ -19,8 +19,8 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="e : ${events}">
-        <td th:text="${e.id}">1</td>
+    <tr th:each="e, stat : ${events}">
+        <td th:text="${stat.index + 1}">1</td>
         <td th:text="${e.name}">Name</td>
         <td th:text="${#temporals.format(e.date, 'yyyy-MM-dd HH:mm')}">2025-10-01 18:00</td>
         <td th:text="${e.capacity}">150</td>

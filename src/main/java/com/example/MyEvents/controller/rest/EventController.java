@@ -61,7 +61,7 @@ public class EventController {
         return ResponseEntity.ok(eventService.create(dto));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @Operation(summary = "Update event", description = "Updates event details by ID")
     @ApiResponse(responseCode = "200", description = "Event updated successfully")
     @ApiResponse(responseCode = "400", description = "Validation failed")
